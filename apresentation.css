@@ -128,9 +128,10 @@ main{
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 30px;
+    margin-top: 15px;
     cursor: pointer;
     transition: transform 0.3s ease;
+    animation: nextCall 1.5s infinite;
 }
 
 .next-button:hover {
@@ -143,7 +144,15 @@ main{
     filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
 }
 
-/* RESPONSIVIDADE */
+@keyframes nextCall {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+}
+
 @media (max-width: 768px) {
     main {
         margin: 20px;
