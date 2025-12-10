@@ -10,8 +10,21 @@
 
     <link rel="stylesheet" href="index.css">
     <link rel="shortcut icon" href="imgs/favicon/favicon.ico" type="image/x-icon">
-
     <title>Mapu</title>
+    
+    <script>
+        function selectTheme(theme) {
+            localStorage.setItem('selectedTheme', theme);
+            const folderPath = `questions_${theme}/`;
+            const fileName = `${theme}.html`;
+            window.location.href = folderPath + fileName;
+        }
+
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+    </script>
+    
 </head>
 <body>
     <header>
@@ -38,24 +51,24 @@
         </section>
 
         <div id="topic-bar">
-            <span class="explore-cards">
+            <span class="explore-cards" onclick="selectTheme('globalizacao')">
                 <img src="imgs/icons/icon-globalizacao.png" alt="Icone globalização.">
                 <p>Globalização</p>
             </span>
 
-            <span class="explore-cards">
+            <span class="explore-cards" onclick="selectTheme('sociedade')">
                 <img src="imgs/icons/icon-sociedade.png" alt="Icone sociedade.">
                 <p>Sociedade</p>
             </span>
 
-            <span class="explore-cards">
+            <span class="explore-cards" onclick="selectTheme('meio-ambiente')">
                 <img src="imgs/icons/icon-meio-ambiente.png" alt="Icone Meio ambiente.">
                 <p>Meio ambiente</p>
             </span>
 
-            <span class="explore-cards">
+            <span class="explore-cards" onclick="selectTheme('regionalizacao')">
                 <img src="imgs/icons/icon-territorio.png" alt="Icone Territorio." >
-                <p>Territórios</p>
+                <p>Regionalização</p>
             </span>
         </div>
 

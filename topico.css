@@ -76,6 +76,7 @@ main {
     }
 
     main{
+        margin: 50px;
         margin: auto;
         grid-template-columns: repeat(2, 170px);
         grid-template-rows: repeat(2, 170px);
@@ -86,7 +87,7 @@ main {
 
     main{
         margin: auto;
-        grid-template-columns: repeat(2, 100px);
+        grid-template-columns: repeat(2, 130px);
         grid-template-rows: repeat(2, 120px);
     }   
     header{
