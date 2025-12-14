@@ -13,16 +13,44 @@
     <title>Mapu</title>
     
     <script>
-        function selectTheme(theme) {
-            localStorage.setItem('selectedTheme', theme);
-            const folderPath = `questions_${theme}/`;
-            const fileName = `${theme}.html`;
-            window.location.href = folderPath + fileName;
-        }
+// ========================================================
+    // FUNÇÃO DE LIMPEZA (CORRIGIDA PARA CACHE/VOLTAR)
+    // ========================================================
+    
+    // Usamos 'pageshow' em vez de 'onload'. 
+    // O 'pageshow' roda mesmo se o usuário chegar aqui pelo botão "Voltar".
+    window.addEventListener('pageshow', function(event) {
+        
+        // Lista de tudo que precisamos apagar
+        const keysToRemove = [
+            'correctCount', 
+            'totalAnswered', 
+            'currentQuestionNumber', 
+            'jumpedQuestions',
+            'lastTopicPrefix'
+            // Se quiser apagar TUDO mesmo, use: localStorage.clear();
+        ];
 
-        function navigateTo(page) {
-            window.location.href = page;
-        }
+        keysToRemove.forEach(key => localStorage.removeItem(key));
+        
+        console.log("Memória do jogo limpa com sucesso (Evento: pageshow)!");
+    });
+
+    function selectTheme(theme) {
+        // Salva o tema e ZERA os contadores para garantir uma nova partida limpa
+        localStorage.setItem('selectedTheme', theme);
+        localStorage.removeItem('correctCount');     // Reforço de segurança
+        localStorage.removeItem('totalAnswered');    // Reforço de segurança
+        localStorage.removeItem('jumpedQuestions');  // Reforço de segurança
+        
+        const folderPath = `questions_${theme}/`;
+        const fileName = `${theme}.html`;
+        window.location.href = folderPath + fileName;
+    }
+
+    function navigateTo(page) {
+        window.location.href = page;
+    }
     </script>
     
 </head>
@@ -90,6 +118,7 @@
                         <h1 class="h1-explore">Você no comando do mapa.</h1>
                         <p class="p-explore">Navegue por questões, descubra <br> novos lugares e prove que, com <br> conhecimento, nenhum território <br> é desconhecido.</p>
                     </span>
+                    
                     <span>
                         <img id="how-explore-gif-2" src="imgs/ilustrations/gifs/explore-second-gif.gif" alt="Vídeo de como funciona o Mapu.">
                     </span>
@@ -97,7 +126,7 @@
         </section>
         <section id="whats-mapu">
             <img id="mapu-name" src="imgs/ilustrations/mapu-text.svg" alt="O que é Mapu?">
-            <p class="whats-mapu-p">“Mapu” significa “Terra” no idioma Mapudungun, falado pelo povo Mapuche da América do Sul, um termo que carrega identidade, território e ancestralidade.</p>
+            <p class="whats-mapu-p">“Mapu” significa “Terra” no idioma Mapudungun, falado pelo povo Mapuche da América do Sul, um termo que carrega identidade, território e ancestralidade.</p>
             <p class="whats-mapu-p">E é a partir dessa conexão profunda com a terra que nasce nosso jogo: Mapu é o seu desafio para conhecer, explorar e dominar o mapa.</p>
             <p class="whats-mapu-p">Aqui, você não só aprende geografia: você se conecta com os lugares, as culturas e as histórias que formam o mundo. Cada pergunta é uma viagem. Cada acerto, uma conquista. Cada estrela, uma prova do seu saber.</p>
         </section>
