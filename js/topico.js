@@ -8,3 +8,7 @@ function selectTheme(theme) {
 function navigateTo(page) {
   window.location.href = page;
 }
+
+window.addEventListener('popstate', (event) => {
+  window.location.href = '../index.html';
+});

@@ -15,7 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const correctCountElement = document.getElementById('correctCount');
     const totalAnsweredElement = document.getElementById('totalAnswered');
-
+    
+    audioCorrect.volume = 0.6;
+    audioIncorrect.volume = 0.6;
     // Identificação da Página Atual
     const getFileNameFromUrl = () => {
         const url = window.location.pathname;
@@ -23,10 +25,21 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const currentFileName = getFileNameFromUrl();
 
-    // --- VARIÁVEIS DECLARADAS NO TOPO PARA EVITAR ERROS ---
+    // Identifica o prefixo do tópico atual e SALVA para o botão "Revanche"
+    const topicPrefix = currentFileName.split('_q_')[0];
+    
+    if (topicPrefix) {
+        localStorage.setItem('lastTopicPrefix', topicPrefix);
+    }
+
+    // --- VARIÁVEIS DE ESTADO ---
     let jumpedQuestions = JSON.parse(localStorage.getItem('jumpedQuestions')) || []; 
     let correctCount = parseInt(localStorage.getItem('correctCount')) || 0;
     let totalAnswered = parseInt(localStorage.getItem('totalAnswered')) || 0;
+    
+    // Define se estamos em modo "Revisão"
+    const isRevisiting = jumpedQuestions.includes(currentFileName);
+
     let questionNumber = parseInt(localStorage.getItem('currentQuestionNumber')) || 1;
     
     // Variáveis de controle local
@@ -35,16 +48,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let nextCount = 0;
     const TOTAL_QUESTIONS = 10; 
 
-    // Obtém o número da questão definido no HTML
+    // Sincroniza número da questão com o HTML
     const currentPageQuestionNumber = parseInt(document.body.getAttribute('data-question-number')) || 1;
-
-// --- CORREÇÃO: FORÇA A SINCRONIA COM A PÁGINA ATUAL ---
-    // Isso garante que se você estiver na Q9, o sistema entenda que é a 9, 
-    // mesmo que a memória diga 10.
     if (currentPageQuestionNumber > 0) {
         questionNumber = currentPageQuestionNumber;
-        localStorage.setItem('currentQuestionNumber', questionNumber);
+        if (!isRevisiting) {
+            localStorage.setItem('currentQuestionNumber', questionNumber);
+        }
     }
+
     // Atualiza a interface inicial
     if (correctCountElement) correctCountElement.textContent = correctCount;
     if (totalAnsweredElement) totalAnsweredElement.textContent = totalAnswered;
@@ -69,31 +81,45 @@ document.addEventListener('DOMContentLoaded', () => {
         if (progressFill) progressFill.style.width = '0%';
     }
 
-    // Se for a Q1 (meio-ambiente) e não for revisão, reseta o jogo
-    if (currentFileName === 'meio-ambiente_q_1.html' && !jumpedQuestions.includes(currentFileName)) {
+    // Reset na Q1 de qualquer tópico
+    if (currentFileName.endsWith('_q_1.html') && !isRevisiting) {
          const savedTotal = parseInt(localStorage.getItem('totalAnswered')) || 0;
          if (savedTotal > 0 && jumpedQuestions.length === 0) {
              resetCounters();
          }
     }
 
-    // Verifica recarregamento (F5) na Q1
+    // Reset ao recarregar a página na Q1
     if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
-        if (currentFileName === 'meio-ambiente_q_1.html' && !jumpedQuestions.includes(currentFileName)) {
+        if (currentFileName.endsWith('_q_1.html') && !isRevisiting) {
             resetCounters();
         }
     }
-    
-    // Chama a barra de progresso inicial
+    if (currentFileName.endsWith('_q_1.html')) {
+        resetCounters();
+    }
     updateProgressBar();
 
     // ============================================================
-    // 3. LÓGICA DO BOTÃO PULAR (JUMP)
+    // [NOVO] ÁUDIO DE INTRODUÇÃO NA QUESTÃO 1
+    // ============================================================
+    // Toca apenas se for a Q1 e não for revisão de questão pulada
+    if (currentFileName.endsWith('_q_1.html') && !isRevisiting) {
+        // Ajuste o caminho e a extensão (.mp3) se necessário
+        const introAudio = new Audio('../sond-efects/intro-sound-efect.mp3');
+        introAudio.volume = 0.6; // Volume agradável (60%)
+        
+        // Tentativa de play com tratamento de erro (para navegadores que bloqueiam autoplay)
+        introAudio.play().catch(error => {
+            console.log("Autoplay de intro bloqueado pelo navegador (aguardando interação):", error);
+        });
+    }
+
+    // ============================================================
+    // 3. LÓGICA DO BOTÃO PULAR
     // ============================================================
     
     if (jumpButton) {
-        const isRevisiting = jumpedQuestions.includes(currentFileName);
-        
         if (isRevisiting && jumpedQuestions.length <= 1) {
             jumpButton.style.display = 'none';
         }
@@ -109,11 +135,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             localStorage.setItem('jumpedQuestions', JSON.stringify(jumpedQuestions));
 
-            if (questionNumber < TOTAL_QUESTIONS) {
+            if (!isRevisiting && questionNumber < TOTAL_QUESTIONS) {
                 questionNumber++;
                 localStorage.setItem('currentQuestionNumber', questionNumber);
-                // ALTERADO PARA MEIO-AMBIENTE
-                window.location.href = `meio-ambiente_q_${questionNumber}.html`;
+                window.location.href = `${topicPrefix}_q_${questionNumber}.html`;
             } else {
                 processJumpedQuestions(); 
             }
@@ -122,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function processJumpedQuestions() {
         const pendingQuestions = jumpedQuestions.filter(q => q !== currentFileName);
+        
         if (pendingQuestions.length > 0) {
             window.location.href = pendingQuestions[0];
         } else {
@@ -129,11 +155,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Função de Finalização Unificada
     function finishQuiz() {
-        if (correctCount <= 5) window.location.href = 'tentativa.html';
-        else if (correctCount <= 6) window.location.href = 'bronze.html';
-        else if (correctCount <= 9) window.location.href = 'prata.html';
-        else window.location.href = 'ouro.html';
+        window.location.href = '../result/resultado.html';
     }
 
     // ============================================================
@@ -156,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ============================================================
-    // 5. BOTÃO PRÓXIMO (NEXT)
+    // 5. BOTÃO PRÓXIMO
     // ============================================================
     nextButton.addEventListener('click', () => {
         if (!selectedCard) return;
@@ -225,14 +249,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (nextCount === 1) {
             nextCount = 2;
             
-            if (questionNumber < TOTAL_QUESTIONS) {
+            if (!isRevisiting && questionNumber < TOTAL_QUESTIONS) {
                 questionNumber++;
                 localStorage.setItem('currentQuestionNumber', questionNumber);
-                // ALTERADO PARA MEIO-AMBIENTE
-                window.location.href = `meio-ambiente_q_${questionNumber}.html`;
-            } else if (jumpedQuestions.length > 0) {
+                window.location.href = `${topicPrefix}_q_${questionNumber}.html`;
+            } 
+            else if (jumpedQuestions.length > 0) {
                 processJumpedQuestions();
-            } else {
+            } 
+            else {
                 finishQuiz();
             }
             return;
@@ -252,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ============================================================
-    // 6. PROTEÇÃO CONTRA SAÍDA ACIDENTAL (VOLTAR DO NAVEGADOR)
+    // 6. PROTEÇÃO CONTRA SAÍDA
     // ============================================================
     
     history.pushState(null, null, window.location.href);
@@ -261,6 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const userConfirmed = confirm("Você tem certeza de que deseja sair do jogo? Seu progresso pode ser perdido.");
         
         if (userConfirmed) {
+            resetCounters(); 
             window.location.href = '../topico.html';
         } else {
             history.pushState(null, null, window.location.href);

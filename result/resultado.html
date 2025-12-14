@@ -22,7 +22,7 @@
 body {
     margin: 0;
     padding: 0;
-    background: #F5F3E7;
+    background: #f5f3e7;
     font-family: 'Trebuchet MS', sans-serif;
     overflow: hidden;
     color: #1B2A41;
@@ -84,7 +84,7 @@ body {
     padding: 40px 20px;
     position: relative;
     z-index: 5;
-    background: rgba(245, 243, 231, 0.8); /* Fundo suave para leitura */
+    background: rgba(245, 243, 231, 0.8);
     border-radius: 30px;
     backdrop-filter: blur(5px);
     box-shadow: 0 0 30px rgba(11, 93, 82, 0.1);
@@ -230,23 +230,40 @@ body {
 </div>
 
 <script>
-/* SOM */
-// Usando sons online para garantir que funcione sem você precisar baixar arquivos
-const winSound = new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg"); 
-const clickSound = new Audio("https://actions.google.com/sounds/v1/cartoon/pop.ogg");
+/* ========================================================
+   1. BLOQUEIO DO BOTÃO VOLTAR
+   ======================================================== */
+history.pushState(null, null, location.href);
+
+window.addEventListener('popstate', function () {
+    const userConfirmed = confirm("Você tem certeza de que deseja sair do jogo? Seu progresso pode ser perdido.");
+    if (userConfirmed) {
+        window.location.replace('../topico.html');
+    } else {
+        history.pushState(null, null, window.location.href);
+    }
+});
+
+/* ========================================================
+   2. SOM
+   ======================================================== */
+// Ajuste o caminho se necessário. O padrão "../" sai de resultados e vai pra raiz
+const clickSound = new Audio("../sond-efects/final-sound-efect.mp3");
+clickSound.volume = 0.6;
 
 function playClick() {
     clickSound.currentTime = 0;
-    clickSound.play().catch(e => console.log("Audio play blocked"));
+    clickSound.play().catch(e => console.log("Audio play blocked (requer interação)"));
 }
 
-/* LÓGICA DE RESULTADOS */
+/* ========================================================
+   3. LÓGICA DE RESULTADOS
+   ======================================================== */
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Recupera os dados REAIS do jogo
+    // Recupera os dados REAIS do jogo
     const score = parseInt(localStorage.getItem('correctCount')) || 0;
-    const total = 10; // Total fixo de perguntas
+    const total = 10; 
 
-    // 2. Carrega na tela
     loadResults(score, total);
 });
 
@@ -263,11 +280,14 @@ function loadResults(score, total) {
     else if (percent >= 0.3) stars = 1; // 3 a 5 acertos
     else stars = 0;                     // 0 a 2 acertos
 
-    // Animação das estrelas (delay leve para efeito)
+    // Animação das estrelas + SOM
     for (let i = 1; i <= stars; i++) {
         setTimeout(() => {
-            document.getElementById("s" + i).classList.add("active");
-            playClick(); // Faz um barulhinho a cada estrela
+            const star = document.getElementById("s" + i);
+            if(star) {
+                star.classList.add("active");
+                playClick();
+            }
         }, i * 400);
     }
 
@@ -275,40 +295,45 @@ function loadResults(score, total) {
 
     if (stars === 3) {
         msg.textContent = "🔥 ÉPICO! Você brilhou no Mapu!";
-        msg.style.color = "#FFD700"; // Dourado
+        msg.style.color = "#FFD700";
     }
     else if (stars === 2) msg.textContent = "⚡ Muito bom! Evoluindo firme!";
     else if (stars === 1) msg.textContent = "💪 Continue! A jornada te espera!";
-    else msg.textContent = "💀 Todo herói começa em algum lugar!";
-    
-    // Toca som de vitória apenas se tiver pelo menos 1 estrela
-    if(stars > 0) {
-        setTimeout(() => { winSound.play().catch(e => console.log("Audio blocked")); }, 1500);
-    }
+    else msg.textContent = "🎯 Todo herói começa em algum lugar!";
 }
 
-/* BOTÕES DE REDIRECIONAMENTO */
-/* BOTÕES DE REDIRECIONAMENTO */
+/* ========================================================
+   4. REDIRECIONAMENTO INTELIGENTE (ADAPTADO)
+   ======================================================== */
 function retry() { 
     playClick(); 
     
-    // --- CORREÇÃO: Limpa a memória antes de reiniciar ---
+    // Recupera o último tópico jogado salvo pelo for_quiz.js
+    const topicPrefix = localStorage.getItem('lastTopicPrefix');
+
+    // Limpeza padrão
     localStorage.removeItem('correctCount');
     localStorage.removeItem('totalAnswered');
     localStorage.removeItem('currentQuestionNumber');
     localStorage.removeItem('jumpedQuestions');
     
-    // Agora sim, redireciona limpo para a primeira questão
-    window.location.href = 'regionalizacao_q_q_1.html'; 
+    // Se temos o tópico salvo, montamos o link dinamicamente
+    if (topicPrefix) {
+        // Ex: ../questions_globalizacao/globalizacao_q_1.html
+        window.location.href = `../questions_${topicPrefix}/${topicPrefix}_q_1.html`;
+    } else {
+        // Fallback de segurança: volta para o menu se der erro
+        alert("Erro ao identificar o tópico. Voltando ao menu.");
+        window.location.href = '../topico.html';
+    }
 }
 
 function menu() { 
     playClick(); 
-    // Redireciona para o menu de tópicos (ajuste o caminho se necessário)
     window.location.href = '../topico.html'; 
 }
 
-/* PARTÍCULAS AUMENTADAS (sobem infinitamente) */
+/* PARTÍCULAS */
 const particleContainer = document.querySelector(".particles");
 
 function spawnParticle() {
@@ -317,7 +342,7 @@ function spawnParticle() {
     particleContainer.appendChild(p);
 
     p.style.left = Math.random() * window.innerWidth + "px";
-    p.style.background = Math.random() > 0.5 ? "#41E18E" : "#1B2A41";
+    p.style.background = Math.random() > 0.5 ? "#41E18E" : "#2E7D32";
     p.style.top = window.innerHeight + "px";
 
     setTimeout(() => p.remove(), 5200);

@@ -601,7 +601,7 @@ footer > span > a:hover{
     #3A88A6 270deg 360deg
   );
 
-  -webkit-mask:
+-webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
