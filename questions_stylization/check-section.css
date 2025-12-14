@@ -22,7 +22,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100vw;
+    width: 100%;
     padding: 20px;
     border-top: 3px solid var(--brown-border); /* Certifique-se que a var existe no root */
     background-color: var(--main-color);       /* Certifique-se que a var existe no root */
@@ -132,7 +132,9 @@
     .checked, .error-mark {
         font-size: 30px;
     }
-
+    #resolution{
+        width: 60%;
+    }
     #next {
         padding: 10px;
         margin-top: 10px;
@@ -155,7 +157,7 @@
         font-size: 20px;
     }
     #resolution p {
-        font-size: 12px;
+        font-size: 15px;
     }
     #next {
         padding: 5px;
@@ -174,8 +176,9 @@
 @media (max-width: 420px) {
     .check{
         width: 100%;
-                margin: 0px;
+        margin: 0px;
     }
+
     #next {
         font-size: 25px;
         padding: 5px;
@@ -185,5 +188,8 @@
     }
     #resolution {
         margin-left: 10px;
+    }
+    #resolution p {
+        font-size: 13px;
     }
 }
