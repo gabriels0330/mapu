@@ -169,11 +169,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (prefix) {
             // Monta o caminho: ex: natureza_q_5.html
             // Ajuste aqui caso seus arquivos estejam em subpastas
-            window.location.href = `/questions_${prefix}/${prefix}_q_${order[0]}.html`;
+            window.location.href = `questions_${prefix}/${prefix}_q_${order[0]}.html`;
         } else {
             // Tratamento de erro caso o usuário tenha aberto essa página direto
             alert("Erro: Tema não identificado. Voltando ao menu principal.");
-            window.location.href = "../topico.html"; 
+            window.location.href = "topico.html"; 
         }
     }
 
