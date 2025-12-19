@@ -30,9 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('totalAnswered', 0);
         localStorage.setItem('answeredIds', JSON.stringify([]));
         localStorage.setItem('jumpedQuestions', JSON.stringify([]));
+        
+        // --- NOVO: Zera o contador de timeouts ---
+        localStorage.setItem('quiz_timeouts', 0);
     }
 
-    // TRAVA DE SEGURANÇA: Garante que nunca tenha mais que 10, mesmo se carregar cache antigo
+    // TRAVA DE SEGURANÇA: Garante que nunca tenha mais que 10
     if (quizOrdem.length > QUESTIONS_TO_PLAY) {
         quizOrdem = quizOrdem.slice(0, QUESTIONS_TO_PLAY);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(quizOrdem));
@@ -95,17 +98,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. CORREÇÃO VISUAL (FIX DO "/20")
     // ============================================================
     
-    // Atualiza o HUD de perguntas
     if (questionsHud) {
         questionsHud.innerHTML = `Perguntas: <span id="totalAnswered">${totalAnswered}</span>/${TOTAL_QUESTIONS}`;
     }
     
-    // Atualiza o HUD de acertos
     if (scoreHud) {
         scoreHud.innerHTML = `Acertos: <span id="correctCount">${correctCount}</span>`;
     }
 
-    // Recaptura os elementos span após reescrever o HTML
     const totalAnsweredElement = document.getElementById('totalAnswered');
     const correctCountElement = document.getElementById('correctCount');
 
@@ -113,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. LÓGICA DE UI E MODO DE JOGO
     // ============================================================
     
-    // Som de intro
     if (totalAnswered === 0 && !sessionStorage.getItem('introPlayed')) {
         const introAudio = new Audio('../sond-efects/intro-sound-efect.mp3');
         introAudio.volume = 0.6;
@@ -180,13 +179,19 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // --- ALTERAÇÃO: Lógica para o Modo Competitivo ---
         if (gameMode === 'competitivo') {
-            // 1. Marca como "respondida" (answeredIds) para que não apareça novamente
+            
+            // --- NOVO: Contabiliza o Timeout ---
+            let tCount = parseInt(localStorage.getItem('quiz_timeouts')) || 0;
+            localStorage.setItem('quiz_timeouts', tCount + 1);
+            // -----------------------------------
+
+            // 1. Marca como "respondida"
             if (currentQuestionId && !answeredIds.includes(currentQuestionId)) {
                 answeredIds.push(currentQuestionId);
                 localStorage.setItem('answeredIds', JSON.stringify(answeredIds));
             }
 
-            // 2. Limpa dos "pulados" caso estivesse lá
+            // 2. Limpa dos "pulados"
             if (jumpedQuestions.includes(currentFileName)) {
                 jumpedQuestions = jumpedQuestions.filter(q => q !== currentFileName);
                 localStorage.setItem('jumpedQuestions', JSON.stringify(jumpedQuestions));
@@ -200,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (totalAnsweredElement) totalAnsweredElement.textContent = totalAnswered;
             updateProgressBar();
 
-            // 5. Marca a bolinha lateral como errada (feedback visual)
+            // 5. Marca feedback visual lateral
             Array.from(sideBottom).forEach(check => check.classList.add('incorrect'));
         }
         // ----------------------------------------------------
@@ -237,6 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function finishQuiz() {
         sessionStorage.removeItem('introPlayed');
         localStorage.removeItem(STORAGE_KEY); 
+        // Não removemos o quiz_timeouts aqui, pois o resultado.html precisa ler
         window.location.href = '../result/resultado.html';
     }
 
@@ -261,7 +267,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (jumpButton) {
-        // Esconde botão pular se já estiver no final
         const questoesRestantes = TOTAL_QUESTIONS - totalAnswered;
         if (questoesRestantes <= 1) jumpButton.style.display = 'none';
 
@@ -291,23 +296,19 @@ document.addEventListener('DOMContentLoaded', () => {
             questionChecked = true;
             if (timerInterval) clearInterval(timerInterval);
 
-            // Marca ID como respondido
             if (currentQuestionId && !answeredIds.includes(currentQuestionId)) {
                 answeredIds.push(currentQuestionId);
                 localStorage.setItem('answeredIds', JSON.stringify(answeredIds));
             }
 
-            // Remove dos pulados se for o caso
             if (jumpedQuestions.includes(currentFileName)) {
                 jumpedQuestions = jumpedQuestions.filter(q => q !== currentFileName);
                 localStorage.setItem('jumpedQuestions', JSON.stringify(jumpedQuestions));
             }
             
-            // Atualiza contadores
             totalAnswered++;
             localStorage.setItem('totalAnswered', totalAnswered);
             
-            // Atualiza UI visualmente
             if (totalAnsweredElement) totalAnsweredElement.textContent = totalAnswered;
             updateProgressBar();
 
@@ -338,7 +339,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 nextButton.style.borderBottom = '5px solid rgb(164, 3, 3)';
                 check_circle_content.innerHTML = `<div class="erro"><div class="error-mark">✗</div></div>`;
                 
-                // MODO APRENDIZADO - Lógica Mantida
                 if (gameMode === 'aprendizado') {
                     if (audioCorrect) audioCorrect.play();
                 } else {
@@ -402,6 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('answeredIds');
             localStorage.removeItem('jumpedQuestions');
             localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem('quiz_timeouts'); // Limpa ao sair manualmente
             window.location.href = '../topico.html'; 
         } else {
             history.pushState(null, null, window.location.href);
