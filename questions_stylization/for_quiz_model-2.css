@@ -30,6 +30,7 @@ header {
     align-items: center;
     flex-direction: column;
     font-family: "Jersey 10", sans-serif;
+    text-align: center; /* Garante centralização se quebrar linha */
 }
 
 main {
@@ -40,7 +41,10 @@ main {
 }
 
 #question-title {
-    font-size: 47px;
+    /* Alterado de 45px para 32px para evitar quebra excessiva */
+    font-size: 32px; 
+    line-height: 1.2; /* Melhora o espaçamento entre linhas se a pergunta for longa */
+    max-width: 90%; /* Evita que o texto encoste nas bordas da tela */
 }
 
 /* --- GRID E CARDS ESPECÍFICOS DESTE MODELO --- */
@@ -62,11 +66,14 @@ main {
     cursor: pointer;
     text-align: center;
     transition: 0.3s;
+    padding: 0 10px; /* Adicionado padding lateral para o texto não colar na borda */
 }
 
 .cards p {
     font-family: "Jersey 10", sans-serif;
-    font-size: 30px;
+    /* Alterado de 30px para 22px para caber melhor na altura de 60px */
+    font-size: 22px; 
+    line-height: 1;
 }
 
 .cards:hover {
@@ -132,18 +139,32 @@ main {
 
 .results {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between; 
     align-items: center;
-    justify-content: space-around;
     width: 100%;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    position: relative; 
+    flex-direction: column;
+}
+
+.timer-center {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffcc00; 
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .result-item {
     margin: 5px 0;
     padding: 10px;
     font-family: "Jersey 10", sans-serif;
-    font-size: 30px;
+    /* Alterado de 30px para 24px para ficar mais delicado */
+    font-size: 24px; 
     color: var(--text-color-2);
+    min-width: 100px;
 }
 
 #result-container {
@@ -161,6 +182,9 @@ main {
     main {
         align-items: first baseline;
     }
+    #question-title {
+        font-size: 28px; /* Reduzi um pouco para telas médias */
+    }
     .container {
         grid-template-columns: repeat(1, 270px);
         grid-template-rows: repeat(4, 50px);
@@ -168,10 +192,11 @@ main {
         grid-row-gap: 20px;
     }
     .cards {
-        padding: 5%;
+        padding: 0 5px;
     }
     .cards p {
-        font-size: 22px;
+        /* Ajustado para 20px em telas médias */
+        font-size: 20px; 
     }
     #result-container, .progress-container {
         width: 600px;
@@ -186,7 +211,8 @@ main {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 30px;
+        /* Reduzi para 24px para não estourar a tela do celular */
+        font-size: 24px; 
     }
     .container {
         grid-template-columns: repeat(1, 250px);
@@ -197,7 +223,8 @@ main {
         align-items: first baseline;
     }
     .cards p {
-        font-size: 20px;
+        /* Reduzi para 18px para garantir leitura no mobile */
+        font-size: 18px; 
     }
     .progress-container, #result-container {
         width: 95%;
@@ -208,6 +235,7 @@ main {
     }
     .result-item {
         margin-bottom: 10px;
-        font-size: 20px;
+        /* Reduzi para 20px */
+        font-size: 20px; 
     }
 }

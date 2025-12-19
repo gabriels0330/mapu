@@ -30,6 +30,7 @@ header {
     align-items: center;
     flex-direction: column;
     font-family: "Jersey 10", sans-serif;
+    text-align: center;
 }
 
 main {
@@ -40,15 +41,19 @@ main {
 }
 
 #question-title {
-    font-size: 35px;
+    /* Ajustado de 35px para 32px e limitado a largura */
+    font-size: 32px;
+    line-height: 1.2;
+    max-width: 90%;
 }
 
 /* --- GRID E CARDS ESPECÍFICOS DESTE MODELO --- */
 .container {
     display: grid;
+    /* Desktop: 4 colunas lado a lado */
     grid-template-columns: repeat(4, 250px);
     grid-template-rows: repeat(1, 300px);
-    grid-column-gap: 5vw;
+    grid-column-gap: 2vw;
     grid-row-gap: 2vh;
 }
 
@@ -69,12 +74,15 @@ main {
     border-radius: 20px;
     width: 120px;
     height: auto;
+    object-fit: cover; /* Garante que a imagem não distorça */
 }
 
 .cards p {
     font-family: "Iceland";
-    margin-top: 10px;
-    font-size: 20px;
+    margin-top: 15px;
+    /* Aumentado de 20px para 24px para melhor leitura da fonte Iceland */
+    font-size: 24px; 
+    line-height: 1.1;
 }
 
 .cards:hover {
@@ -140,18 +148,32 @@ main {
 
 .results {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between; 
     align-items: center;
-    justify-content: space-around;
     width: 100%;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    position: relative; 
+    flex-direction: column;
+}
+
+.timer-center {
+    font-size: 1.7rem;
+    font-weight: bold;
+    color: #000000; 
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .result-item {
     margin: 5px 0;
     padding: 10px;
     font-family: "Jersey 10", sans-serif;
-    font-size: 30px;
+    /* Ajuste para 24px */
+    font-size: 24px;
     color: var(--text-color-2);
+    min-width: 100px;
 }
 
 #result-container {
@@ -164,16 +186,23 @@ main {
 /* --- RESPONSIVIDADE --- */
 @media (max-width: 1225px) {
     .container {
+        /* Muda para 2x2 */
         grid-template-columns: repeat(2, 200px);
-        grid-template-rows: repeat(2, 200px);
+        grid-template-rows: repeat(2, 220px); /* Aumentei um pouco a altura para caber texto */
         grid-column-gap: 20px;
         grid-row-gap: 20px;
+    }
+    #question-title {
+        font-size: 28px;
     }
     .cards {
         padding: 5%;
     }
     .cards img {
         width: 100px;
+    }
+    .cards p {
+        font-size: 22px;
     }
     #result-container, .progress-container {
         width: 600px;
@@ -184,20 +213,27 @@ main {
 }
 
 @media (max-width: 640px) {
-    header h1 {
-        font-size: 25px;
+    header {
+        margin-bottom: 20px;
+    }
+    /* Corrigido o seletor de h1 para #question-title */
+    #question-title {
+        font-size: 24px;
     }
     .container {
         display: grid;
-        grid-template-columns: repeat(2, 150px);
-        grid-template-rows: repeat(2, 150px);
+        /* Reduzi para 160px para caber em telas pequenas */
+        grid-template-columns: repeat(2, 160px);
+        grid-template-rows: repeat(2, 180px);
         grid-gap: 10px;
     }
     .cards img {
         width: 80px;
     }
     .cards p {
-        font-size: 13px;
+        /* Aumentado de 13px para 16px para legibilidade */
+        font-size: 16px; 
+        margin-top: 5px;
     }
     .progress-container, #result-container {
         width: 95%;
@@ -209,5 +245,13 @@ main {
     .result-item {
         margin-bottom: 10px;
         font-size: 20px;
+    }
+}
+
+@media (max-width: 375px) {
+    .container {
+        /* Ajuste fino para celulares muito estreitos */
+        grid-template-columns: repeat(2, 145px);
+        grid-template-rows: repeat(2, 180px);
     }
 }

@@ -30,6 +30,7 @@ header {
     align-items: center;
     flex-direction: column;
     font-family: "Jersey 10", sans-serif;
+    text-align: center; /* Garante que o texto centralize se quebrar linha */
 }
 
 main {
@@ -40,7 +41,10 @@ main {
 }
 
 #question-title {
-    font-size: 35px;
+    /* Ajustado de 35px para 32px para melhor leitura */
+    font-size: 32px;
+    line-height: 1.2;
+    max-width: 90%;
 }
 
 /* --- GRID E CARDS --- */
@@ -60,7 +64,7 @@ main {
     border-radius: 20px;
     border: 1px solid var(--brown-border);
     cursor: pointer;
-    padding: 10%;
+    padding: 5%; /* Reduzi levemente o padding para dar espaço ao texto */
     text-align: center;
     transition: 0.3s;
 }
@@ -68,7 +72,8 @@ main {
 .cards p {
     color: white;
     font-family: "Jersey 10", sans-serif;
-    font-size: 45px;
+    /* Reduzi de 45px para 40px para evitar quebras indesejadas */
+    font-size: 40px;
 }
 
 .verde {
@@ -141,17 +146,32 @@ main {
 /* --- RESULTADOS (Header) --- */
 .results {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between; 
     align-items: center;
-    justify-content: space-around;
     width: 100%;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    position: relative; 
+    flex-direction: column;
+}
+
+.timer-center {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffcc00; 
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .result-item {
-    margin: 0 0;
+    margin: 5px 0;
+    padding: 10px;
     font-family: "Jersey 10", sans-serif;
-    font-size: 30px;
+    /* Ajuste para 24px */
+    font-size: 24px;
     color: var(--text-color-2);
+    min-width: 100px;
 }
 
 #result-container {
@@ -170,13 +190,19 @@ main {
         grid-row-gap: 2vh;
     }
     header {
-        margin-bottom: 50px;
+        margin-bottom: 30px; /* Reduzi para não empurrar muito */
     }
     main {
         align-items: first baseline;
     }
     .cards {
         padding: 5%;
+    }
+    .cards p {
+        font-size: 32px; /* Reduzi para caber nos 200px */
+    }
+    #question-title {
+        font-size: 28px;
     }
     #result-container {
         width: 600px;
@@ -192,18 +218,21 @@ main {
 @media (max-width: 640px) {
     .container {
         grid-template-columns: repeat(2, 170px);
-        grid-template-rows: repeat(1, 240px);
-        grid-column-gap: 5vw;
+        grid-template-rows: repeat(1, 200px); /* Reduzi altura para caber na tela */
+        grid-column-gap: 3vw;
         grid-row-gap: 2vh;
     }
     header {
-        margin-bottom: 100px;
+        margin-bottom: 20px; /* IMPORTANTE: De 100px para 20px */
     }
     main {
         align-items: first baseline;
     }
     .cards p {
-        font-size: 30px;
+        font-size: 24px; /* Tamanho seguro para celular */
+    }
+    #question-title {
+        font-size: 24px;
     }
     .progress-container {
         width: 95%;
@@ -224,14 +253,20 @@ main {
 @media (max-width: 420px) {
     .container {
         grid-template-columns: repeat(2, 140px);
-        grid-template-rows: repeat(1, 240px);
-        grid-column-gap: 5vw;
+        grid-template-rows: repeat(1, 180px); /* Ajuste final de altura */
+        grid-column-gap: 3vw;
         grid-row-gap: 2vh;
     }
     header {
-        margin-bottom: 100px;
+        margin-bottom: 15px;
     }
     main {
         align-items: first baseline;
+    }
+    .cards p {
+        font-size: 20px; /* "VERDADEIRO" cabe aqui sem quebrar */
+    }
+    #question-title {
+        font-size: 20px;
     }
 }

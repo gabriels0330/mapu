@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="../imgs/favicon/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../questions_stylization/for_quiz_model-2.css">
+    <link rel="stylesheet" href="../questions_stylization/border.css">
+    <link rel="stylesheet" href="../questions_stylization/check-section.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Iceland&family=Jersey+10&display=swap" rel="stylesheet">
+
+    <script src="../js/for_quiz.js"></script>
+    <title>Mapu | Regionalização</title>
+</head>
+<body data-question-number="20" data-total-questions="20">
+    <header>
+        <div class="results">
+            <div class="progress-container" id="progress-hud">
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+
+            <span id="result-container">
+                <div class="result-item" id="questions-hud">
+                    Perguntas: <span id="totalAnswered">0</span>/20
+                </div>
+
+                <div id="competitive-hud" class="timer-center" style="display: none;">
+                    <span style="margin-right: 5px;">⌛</span>
+                    <span id="timer-display">00:00</span>
+                </div>
+                
+                <div class="result-item" id="score-hud">
+                    Acertos: <span id="correctCount">0</span>
+                </div>
+            </span>
+        </div>
+        <span id="question-title">Regionalizar significa dividir o espaço geográfico em áreas menores que possuam características ___ entre si, facilitando o estudo e a administração.</span>
+    </header>
+    <main>
+        <div class="container">
+            <div class="cards explore-cards" data-answer="incorrect">
+                <p>opostas</p>
+            </div>
+
+            <div class="cards explore-cards" data-answer="incorrect">
+                <p>aleatórias</p>
+            </div>
+
+            <div class="cards explore-cards" data-answer="correct">
+                <p>semelhantes</p>
+            </div>
+
+            <div class="cards explore-cards" data-answer="incorrect">
+                <p>desiguais</p>
+            </div>
+        </div>
+    </main>
+
+    <div class="check">
+        <button type="button" id="jump_button">Pular</button>
+        <div id="check_circle_content"></div>
+        <div id="resolution"><p><strong>Explicação:</strong></p><p>A REGIONALIZAÇÃO AGRUPA ÁREAS COM CARACTERÍSTICAS SEMELHANTES (NATURAIS, ECONÔMICAS OU SOCIAIS) PARA COMPREENDER MELHOR O ESPAÇO.</p></div>
+        <button id="next" type="button" disabled>CONFERIR</button>
+        
+    </div>
+
+    <audio id="audioCorrect" src="../sond-efects/acerto-soud-efect.mp3"></audio>
+    <audio id="audioIncorrect" src="../sond-efects/erro-sound-efect.mp3"></audio>
+</body>
+</html>

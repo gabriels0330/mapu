@@ -17,17 +17,26 @@
 </head>
 <body data-question-number="2" data-total-questions="10">
     <header>
-        
         <div class="results">
-            <div class="progress-container">
+            <div class="progress-container" id="progress-hud">
                 <div class="progress-bar" id="progress-bar">
                     <div class="progress-fill" id="progress-fill"></div>
                 </div>
-                
             </div>
+
             <span id="result-container">
-                <div class="result-item">Perguntas: <span id="totalAnswered"> 0</span>/10</div>
-                <div class="result-item">Acertos: <span id="correctCount"> 0</span></div>
+                <div class="result-item" id="questions-hud">
+                    Perguntas: <span id="totalAnswered">0</span>/10
+                </div>
+
+                <div id="competitive-hud" class="timer-center" style="display: none;">
+                    <span style="margin-right: 5px;">⌛</span>
+                    <span id="timer-display">00:00</span>
+                </div>
+                
+                <div class="result-item" id="score-hud">
+                    Acertos: <span id="correctCount">0</span>
+                </div>
             </span>
         </div>
         <span id="question-title">A integração econômica promovida pela globalização intensifica o fluxo de ___ entre diferentes países.</span>

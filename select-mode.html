@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="../imgs/favicon/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../questions_stylization/select-mode.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Iceland&family=Jersey+10&display=swap" rel="stylesheet">
+
+    <script src="/js/selection.js"></script>
+    <title>Mapu | Modo de jogo</title>
+</head>
+<body>
+    <div id="screen-selection" class="fade-in">
+        <span>SELECIONE O MODO DE JOGO:</span>
+        <main>
+            <div class="container">
+                <div class="cards explore-cards-h" data-mode="competitivo">
+                    <img src="../imgs/icons/icon-modos/tempo.png" alt="Tempo">
+                    <p>CORRIDA CONTRA O TEMPO</p>
+                </div>
+
+                <div class="cards explore-cards" data-mode="classico">
+                    <img src="../imgs/icons/icon-modos/padrao.png" alt="Clássico">
+                    <p>CLÁSSICO</p>
+                </div>
+
+                <div class="cards explore-cards-e" data-mode="aprendizado">
+                    <img src="../imgs/icons/icon-modos/aprender.png" alt="Aprender">
+                    <p>FOCO NA LIÇÃO</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="screen-timer" style="display: none;" class="fade-in">
+        <main>
+            <div class="timer-setup-box">
+                <h2 style="font-family: 'Jersey 10'; font-size: 50px; color: #2E7D32; margin-bottom: 10px;">
+                    Desafio Competitivo
+                </h2>
+                
+                <p style="font-family: 'Jersey 10'; font-size: 25px; margin-bottom: 20px; color: #5e4b35;">
+                    DEFINA O TEMPO POR QUESTÃO:
+                </p>
+
+                <div class="custom-timer-control">
+                    <button id="btn-minus" class="timer-btn">-</button>
+                    
+                    <div class="timer-display">
+                        <span id="display-min">00</span>:<span id="display-sec">30</span>
+                    </div>
+                    
+                    <button id="btn-plus" class="timer-btn">+</button>
+                </div>
+                
+                <p style="font-family: 'Iceland'; font-size: 18px; color: #8B6F47; margin-top: 5px;">
+                    (Mínimo: 3s | Máximo: 5 min)
+                </p>
+
+                <div class="buttons-row" style="margin-top: 30px;">
+                    <button id="btn-back">VOLTAR</button>
+                    <button id="btn-start-competitive">INICIAR</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/selection.js"></script>
+</body>
+</html>
