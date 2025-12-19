@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('jumpedQuestions', JSON.stringify([]));
     }
 
-    // TRAVA DE SEGURANÇA: Garante que nunca tenha mais que 10
+    // TRAVA DE SEGURANÇA: Garante que nunca tenha mais que 10, mesmo se carregar cache antigo
     if (quizOrdem.length > QUESTIONS_TO_PLAY) {
         quizOrdem = quizOrdem.slice(0, QUESTIONS_TO_PLAY);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(quizOrdem));
@@ -92,15 +92,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (topicPrefix) localStorage.setItem('lastTopicPrefix', topicPrefix);
 
     // ============================================================
-    // 3. CORREÇÃO VISUAL
+    // 3. CORREÇÃO VISUAL (FIX DO "/20")
     // ============================================================
+    
+    // Atualiza o HUD de perguntas
     if (questionsHud) {
         questionsHud.innerHTML = `Perguntas: <span id="totalAnswered">${totalAnswered}</span>/${TOTAL_QUESTIONS}`;
     }
+    
+    // Atualiza o HUD de acertos
     if (scoreHud) {
         scoreHud.innerHTML = `Acertos: <span id="correctCount">${correctCount}</span>`;
     }
 
+    // Recaptura os elementos span após reescrever o HTML
     const totalAnsweredElement = document.getElementById('totalAnswered');
     const correctCountElement = document.getElementById('correctCount');
 
@@ -169,38 +174,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- MUDANÇA AQUI: TRATAMENTO DO TEMPO ESGOTADO ---
     function handleTimeout() {
         if (questionChecked) return;
         questionChecked = true;
         
-        // Se for MODO COMPETITIVO, precisamos contabilizar a questão mesmo sem resposta
+        // --- ALTERAÇÃO: Lógica para o Modo Competitivo ---
         if (gameMode === 'competitivo') {
-            // 1. Registra ID para não repetir
+            // 1. Marca como "respondida" (answeredIds) para que não apareça novamente
             if (currentQuestionId && !answeredIds.includes(currentQuestionId)) {
                 answeredIds.push(currentQuestionId);
                 localStorage.setItem('answeredIds', JSON.stringify(answeredIds));
             }
 
-            // 2. Remove de pulados se estiver lá
+            // 2. Limpa dos "pulados" caso estivesse lá
             if (jumpedQuestions.includes(currentFileName)) {
                 jumpedQuestions = jumpedQuestions.filter(q => q !== currentFileName);
                 localStorage.setItem('jumpedQuestions', JSON.stringify(jumpedQuestions));
             }
 
-            // 3. Incrementa o total respondido (avança a barra)
+            // 3. Aumenta a barra de progresso (totalAnswered)
             totalAnswered++;
             localStorage.setItem('totalAnswered', totalAnswered);
             
-            // 4. Atualiza UI da barra
+            // 4. Atualiza a barra visualmente
             if (totalAnsweredElement) totalAnsweredElement.textContent = totalAnswered;
             updateProgressBar();
 
-            // 5. Marca indicador lateral como incorreto
+            // 5. Marca a bolinha lateral como errada (feedback visual)
             Array.from(sideBottom).forEach(check => check.classList.add('incorrect'));
         }
-        
-        // Efeitos visuais padrão (valem para todos, mas o startTimer só roda no competitivo)
+        // ----------------------------------------------------
+
         cards.forEach(card => {
             card.style.opacity = "0.6";
             card.style.pointerEvents = 'none';
@@ -257,6 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (jumpButton) {
+        // Esconde botão pular se já estiver no final
         const questoesRestantes = TOTAL_QUESTIONS - totalAnswered;
         if (questoesRestantes <= 1) jumpButton.style.display = 'none';
 
@@ -286,19 +291,23 @@ document.addEventListener('DOMContentLoaded', () => {
             questionChecked = true;
             if (timerInterval) clearInterval(timerInterval);
 
+            // Marca ID como respondido
             if (currentQuestionId && !answeredIds.includes(currentQuestionId)) {
                 answeredIds.push(currentQuestionId);
                 localStorage.setItem('answeredIds', JSON.stringify(answeredIds));
             }
 
+            // Remove dos pulados se for o caso
             if (jumpedQuestions.includes(currentFileName)) {
                 jumpedQuestions = jumpedQuestions.filter(q => q !== currentFileName);
                 localStorage.setItem('jumpedQuestions', JSON.stringify(jumpedQuestions));
             }
             
+            // Atualiza contadores
             totalAnswered++;
             localStorage.setItem('totalAnswered', totalAnswered);
             
+            // Atualiza UI visualmente
             if (totalAnsweredElement) totalAnsweredElement.textContent = totalAnswered;
             updateProgressBar();
 
@@ -329,6 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 nextButton.style.borderBottom = '5px solid rgb(164, 3, 3)';
                 check_circle_content.innerHTML = `<div class="erro"><div class="error-mark">✗</div></div>`;
                 
+                // MODO APRENDIZADO - Lógica Mantida
                 if (gameMode === 'aprendizado') {
                     if (audioCorrect) audioCorrect.play();
                 } else {
@@ -369,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!jaRespondida) {
                 if (isJump && ehMesmaAtual) {
-                    // loop
+                    // Continua procurando
                 } else {
                     foundNext = true;
                     indiceAtual = tempIndice;
