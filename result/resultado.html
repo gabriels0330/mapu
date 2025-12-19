@@ -167,33 +167,14 @@ body:not(.competitive-mode) .end-screen {
     color: var(--text-color);
 }
 
-/* ESTATÍSTICAS ESPECÍFICAS DO COMPETITIVO */
+/* Detalhes extras do competitivo */
 .competitive-stats {
-    display: none; /* Oculto por padrão */
-    background: rgba(0, 0, 0, 0.3);
-    padding: 15px 20px;
-    border-radius: 15px;
-    margin: 20px auto;
+    display: none;
     font-size: 18px;
-    color: #e0e0e0;
-    max-width: 80%;
-    border: 1px solid rgba(255,255,255,0.1);
+    margin-top: 10px;
+    color: var(--text-color);
+    opacity: 0.8;
 }
-
-.stat-item {
-    display: flex;
-    justify-content: space-between;
-    margin: 8px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    padding-bottom: 5px;
-}
-
-.stat-item:last-child {
-    border-bottom: none;
-}
-
-.stat-val-bad { color: #ff4500; font-weight: bold; } /* Laranja avermelhado para erro/tempo */
-.stat-val-neutral { color: #ffffff; font-weight: bold; }
 
 .feedback {
     font-size: 22px;
@@ -275,14 +256,7 @@ body.competitive-mode .btn.secondary {
     </div>
     
     <div class="competitive-stats" id="compStats">
-        <div class="stat-item">
-            <span>Respondidas:</span>
-            <span id="realAnsweredVal" class="stat-val-neutral">0</span>
-        </div>
-        <div class="stat-item">
-            <span>Não Respondidas (Tempo):</span>
-            <span id="timeoutVal" class="stat-val-bad">0</span>
-        </div>
+        Respondidas: <span id="answeredCount">0</span> | Precisão: <span id="accuracyVal">0%</span>
     </div>
 
     <p class="feedback" id="feedbackMsg"></p>
@@ -327,55 +301,49 @@ document.addEventListener('DOMContentLoaded', () => {
     // Recupera dados
     const gameMode = localStorage.getItem('gameMode') || 'classico';
     const score = parseInt(localStorage.getItem('correctCount')) || 0;
+    const totalAnswered = parseInt(localStorage.getItem('totalAnswered')) || 10;
     
-    // Recupera a contagem de Timeouts que definimos no for_quiz.js
-    // Se não existir (modo clássico ou aprendizado), assume 0
-    const timeouts = parseInt(localStorage.getItem('quiz_timeouts')) || 0;
-    
-    // Define total fixo como 10 (regra do seu jogo)
-    const totalQuestions = 10; 
+    const quizOrdem = JSON.parse(localStorage.getItem('quiz_ordem')) || [];
+    const totalQuestions = quizOrdem.length || 10;
 
-    setupUI(gameMode, score, timeouts, totalQuestions);
+    setupUI(gameMode, score, totalAnswered, totalQuestions);
 });
 
-function setupUI(mode, score, timeouts, totalFixed) {
+function setupUI(mode, score, answered, totalFixed) {
     const title = document.getElementById("endTitle");
     const mainStats = document.getElementById("mainStats");
     const compStats = document.getElementById("compStats");
     const starsContainer = document.getElementById("starsContainer");
     const msg = document.getElementById("feedbackMsg");
     
-    // --- 1. MODO COMPETITIVO (Lógica Alterada) ---
+    // --- 1. MODO COMPETITIVO ---
     if (mode === 'competitivo') {
         document.body.classList.add('competitive-mode');
         title.textContent = "SESSÃO FINALIZADA";
-        starsContainer.style.display = 'block'; 
+        starsContainer.style.display = 'block'; // Mostra estrelas
         
-        // Exibe acertos gerais
-        mainStats.innerHTML = `Acertos: <span style="color:#41E18E">${score}</span> <span style="font-size:0.7em; color:#aaa;">/ ${totalFixed}</span>`;
+        mainStats.innerHTML = `Acertos: <span style="color:#41E18E">${score}</span>`;
         compStats.style.display = 'block';
+        document.getElementById("answeredCount").textContent = answered;
         
-        // CÁLCULO DE SUBTRAÇÃO:
-        // Respondidas de fato = Total (10) - Timeouts
-        const actuallyAnswered = totalFixed - timeouts;
+        let accuracy = answered > 0 ? Math.round((score / answered) * 100) : 0;
+        document.getElementById("accuracyVal").textContent = accuracy + "%";
 
-        // Atualiza o HTML com os valores calculados
-        document.getElementById("realAnsweredVal").textContent = actuallyAnswered;
-        document.getElementById("timeoutVal").textContent = timeouts;
-
-        calculateStarsAndFeedback(score, totalFixed, 'competitivo'); 
+        calculateStarsAndFeedback(score, answered, 'competitivo'); 
     } 
     
     // --- 2. MODO APRENDIZADO ---
     else if (mode === 'aprendizado') {
         document.body.classList.remove('competitive-mode');
         title.textContent = "ESTUDO CONCLUÍDO";
+        
+        // Esconde as estrelas
         starsContainer.style.display = 'none'; 
         
         document.getElementById("correctCount").textContent = score;
         document.getElementById("totalCount").textContent = totalFixed;
 
-        // Feedback simples
+        // Feedback simples sem julgamento
         if (score === totalFixed) {
             msg.textContent = "Excelente! Você absorveu todo o conteúdo.";
         } else if (score >= totalFixed / 2) {
@@ -385,11 +353,11 @@ function setupUI(mode, score, timeouts, totalFixed) {
         }
     } 
     
-    // --- 3. MODO CLÁSSICO ---
+    // --- 3. MODO CLÁSSICO (Padrão) ---
     else {
         document.body.classList.remove('competitive-mode');
         title.textContent = "DESAFIO CONCLUÍDO";
-        starsContainer.style.display = 'block'; 
+        starsContainer.style.display = 'block'; // Mostra estrelas
         
         document.getElementById("correctCount").textContent = score;
         document.getElementById("totalCount").textContent = totalFixed;
@@ -403,10 +371,10 @@ function calculateStarsAndFeedback(score, total, modeType) {
     let percent = total > 0 ? score / total : 0;
     let stars = 0;
 
-    if (percent === 1) stars = 3;        
+    if (percent === 1) stars = 3;       
     else if (percent >= 0.6) stars = 2; 
     else if (percent >= 0.3) stars = 1; 
-    else stars = 0;                      
+    else stars = 0;                     
 
     // Animação das estrelas
     for (let i = 1; i <= stars; i++) {
@@ -419,7 +387,7 @@ function calculateStarsAndFeedback(score, total, modeType) {
         }, i * 400);
     }
 
-    // Mensagens
+    // Mensagens Diferentes para Clássico vs Competitivo
     if (modeType === 'competitivo') {
         if (stars === 3) {
             msg.textContent = "🏆 RANK: DIAMANTE (PERFEITO!)";
@@ -429,6 +397,7 @@ function calculateStarsAndFeedback(score, total, modeType) {
         else if (stars === 1) msg.textContent = "🥈 RANK: PRATA (NA MÉDIA)";
         else msg.textContent = "🥉 RANK: BRONZE (TREINE MAIS)";
     } else {
+        // Clássico
         if (stars === 3) {
             msg.textContent = "🔥 ÉPICO! Você brilhou no Mapu!";
             msg.style.color = "#0B5D52";
@@ -440,20 +409,17 @@ function calculateStarsAndFeedback(score, total, modeType) {
 }
 
 /* ========================================================
-   4. REDIRECIONAMENTO E LIMPEZA
+   4. REDIRECIONAMENTO INTELIGENTE
    ======================================================== */
 function retry() { 
     playClick(); 
     const topicPrefix = localStorage.getItem('lastTopicPrefix');
     
-    // Limpa todas as variáveis de controle
     localStorage.removeItem('correctCount');
     localStorage.removeItem('totalAnswered');
-    localStorage.removeItem('quiz_timeouts'); // IMPORTANTE: Reseta os timeouts
     localStorage.removeItem('currentQuestionNumber');
     localStorage.removeItem('jumpedQuestions');
     localStorage.removeItem('answeredIds');
-    localStorage.removeItem('quiz_ordem_v3'); 
     
     if (topicPrefix) {
         window.location.href = `../questions_${topicPrefix}/${topicPrefix}_q_1.html`;
@@ -464,8 +430,6 @@ function retry() {
 
 function menu() { 
     playClick(); 
-    localStorage.removeItem('quiz_ordem_v3'); // Limpa a ordem ao sair
-    localStorage.removeItem('quiz_timeouts');
     window.location.href = '../topico.html'; 
 }
 
