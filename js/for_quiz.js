@@ -311,7 +311,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 nextButton.style.backgroundColor = 'red';
                 nextButton.style.borderBottom = '5px solid rgb(164, 3, 3)';
                 check_circle_content.innerHTML = `<div class="erro"><div class="error-mark">✗</div></div>`;
-                if (audioIncorrect) audioIncorrect.play();
+                
+                // --- MUDANÇA PARA O MODO APRENDIZADO ---
+                if (gameMode === 'aprendizado') {
+                    // Se for modo aprendizado, toca o áudio de "correto/neutro" mesmo errando
+                    // para manter apenas uma música.
+                    if (audioCorrect) audioCorrect.play();
+                } else {
+                    // Modos clássico e competitivo continuam com o som de erro
+                    if (audioIncorrect) audioIncorrect.play();
+                }
             }
 
             Array.from(sideBottom).forEach(check => check.classList.add(isCorrect ? 'correct' : 'incorrect'));
